@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- ============================================================
+             Daily PDC Deposit Digest — sent to every PDC User in a
+             company that has is_pdc_user_daily_notify = True.
+             Rendered against pdc.deposit.digest; object.line_ids is the
+             Many2many of pdc.wizard records due to be deposited tomorrow.
+             ============================================================ -->
+        <record id="pdc_user_daily_mail_template" model="mail.template">
+            <field name="name">PDC: Daily Deposit Digest</field>
+            <field name="model_id" ref="rental_management_pdc.model_pdc_deposit_digest"/>
+            <field name="subject">PDC Cheques to Deposit on {{ object.deposit_date }} ({{ object.line_count }})</field>
+            <field name="email_from">{{ (object.company_id.email or user.email) }}</field>
+            <field name="lang">{{ object.user_id.lang }}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+                    <table style="width:100%">
+                        <tr>
+                            <td>
+                                <h2 style="color: #1f6feb; text-align: center; margin-bottom: 4px;">
+                                    PDC Daily Deposit Digest
+                                </h2>
+                                <p style="text-align:center; color:#555; margin-top:0;">
+                                    Deposit date:
+                                    <strong><t t-out="object.deposit_date"/></strong>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                    <hr/>
+
+                    <p>
+                        Hello <strong><t t-out="object.user_id.name or 'PDC User'"/></strong>,
+                    </p>
+                    <p>
+                        The following <strong><t t-out="object.line_count"/></strong>
+                        PDC cheque(s) are scheduled for deposit on
+                        <strong><t t-out="object.deposit_date"/></strong>
+                        in company
+                        <strong><t t-out="object.company_id.name"/></strong>.
+                        Please review and register/deposit them accordingly.
+                    </p>
+
+                    <table class="table"
+                           style="width: 100%; border-collapse: collapse; margin-top: 12px;">
+                        <thead class="thead-light"
+                               style="background-color: #f2f4f7;">
+                            <tr>
+                                <th scope="col"
+                                    style="padding: 8px; border-bottom: 2px solid #dee2e6; text-align: left;">
+                                    Reference
+                                </th>
+                                <th scope="col"
+                                    style="padding: 8px; border-bottom: 2px solid #dee2e6; text-align: left;">
+                                    Partner
+                                </th>
+                                <th scope="col"
+                                    style="padding: 8px; border-bottom: 2px solid #dee2e6; text-align: right;">
+                                    Amount
+                                </th>
+                                <th scope="col"
+                                    style="padding: 8px; border-bottom: 2px solid #dee2e6; text-align: left;">
+                                    Payment Date
+                                </th>
+                                <th scope="col"
+                                    style="padding: 8px; border-bottom: 2px solid #dee2e6; text-align: left;">
+                                    Due Date
+                                </th>
+                                <th scope="col"
+                                    style="padding: 8px; border-bottom: 2px solid #dee2e6; text-align: left;">
+                                    State
+                                </th>
+                                <th scope="col"
+                                    style="padding: 8px; border-bottom: 2px solid #dee2e6; text-align: center;">
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="object.line_ids" t-as="line">
+                                <td style="padding: 8px; border-bottom: 1px solid #dee2e6;">
+                                    <t t-out="line.reference or line.name or '-'"/>
+                                </td>
+                                <td style="padding: 8px; border-bottom: 1px solid #dee2e6;">
+                                    <t t-out="line.partner_id.name or '-'"/>
+                                </td>
+                                <td style="padding: 8px; border-bottom: 1px solid #dee2e6; text-align: right;">
+                                    <span t-field="line.payment_amount"
+                                          t-options='{"widget": "monetary", "display_currency": line.currency_id}'/>
+                                </td>
+                                <td style="padding: 8px; border-bottom: 1px solid #dee2e6;">
+                                    <t t-out="line.payment_date or '-'"/>
+                                </td>
+                                <td style="padding: 8px; border-bottom: 1px solid #dee2e6;">
+                                    <strong style="color:#d9534f;">
+                                        <t t-out="line.due_date"/>
+                                    </strong>
+                                </td>
+                                <td style="padding: 8px; border-bottom: 1px solid #dee2e6;">
+                                    <span t-field="line.state"/>
+                                </td>
+                                <td style="padding: 8px; border-bottom: 1px solid #dee2e6; text-align: center;">
+                                    <a t-att-href="'%s/web#id=%s&amp;model=pdc.wizard&amp;view_type=form' % (object.base_url, line.id)"
+                                       style="background-color:#1f6feb; color:#ffffff; padding:6px 12px; text-decoration:none; border-radius:4px; display:inline-block;">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p style="margin-top: 20px;">
+                        Thank you,
+                    </p>
+                    <p>
+                        <strong><t t-out="object.company_id.name"/></strong>
+                    </p>
+                    <hr/>
+                    <p style="font-size: 11px; color: #999; font-style: italic;">
+                        This is an automated daily digest from the PDC module.
+                        Please do not reply to this email.
+                    </p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <data noupdate="0">
+            <!-- ================================================================
+                 PDC Privilege
+                 Container category for the PDC User / PDC Manager groups.
+                 Mirrors the res.groups.privilege pattern used by
+                 rental_management (rental_management.security.groups.xml).
+                 ================================================================ -->
+            <record id="module_rental_management_pdc" model="res.groups.privilege">
+                <field name="name">Rental Management - PDC</field>
+                <field name="description">Access rights for PDC Cheque Management</field>
+            </record>
+
+            <!-- ================================================================
+                 PDC User
+                 Can: add, register, deposit, done
+                 ================================================================ -->
+            <record id="group_pdc_user" model="res.groups">
+                <field name="name">PDC User</field>
+                <field name="privilege_id" ref="module_rental_management_pdc"/>
+                <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+                <field name="comment">
+                    PDC User: can create, register, deposit and mark PDC cheques as done.
+                </field>
+            </record>
+
+            <!-- ================================================================
+                 PDC Manager
+                 Can: reset to draft, return, bounce and cancel
+                 (Inherits all PDC User rights via implied_ids)
+                 ================================================================ -->
+            <record id="group_pdc_manager" model="res.groups">
+                <field name="name">PDC Manager</field>
+                <field name="privilege_id" ref="module_rental_management_pdc"/>
+                <field name="implied_ids" eval="[(4, ref('group_pdc_user'))]"/>
+                <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+                <field name="comment">
+                    PDC Manager: can reset to draft, return, bounce and cancel PDC cheques.
+                </field>
+            </record>
+        </data>
+    </data>
+</odoo>

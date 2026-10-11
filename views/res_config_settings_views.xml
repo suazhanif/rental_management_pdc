@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ================================================================
+         Inherit the Accounting settings form (account.res_config_settings_view_form)
+         and add a new PDC Daily Digest block alongside the existing
+         sh_pdc Customer/Vendor blocks.
+         ================================================================ -->
+    <record id="res_config_settings_view_form_pdc_user_daily"
+            model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.pdc.user.daily</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <app name="account" position="inside">
+                <block title="PDC Daily Digest" name="sh_pdc_user_daily">
+                    <setting help="When enabled, all PDC Users in this company receive a daily morning email listing every PDC cheque scheduled for deposit the next day (state Draft or Registered).">
+                        <field name="is_pdc_user_daily_notify"/>
+                    </setting>
+                </block>
+            </app>
+        </field>
+    </record>
+</odoo>

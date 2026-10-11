@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ================================================================
+             Restrict "Action" items in the Action menu (list view) to the
+             proper PDC role. Inherits sh_pdc server actions defined in
+             wizard/pdc_multi_action_views.xml.
+
+             User (group_pdc_user):
+               - Register The Checks
+               - Deposit The Checks
+               - Done The Checks
+               - Register PDC Check (binding on account.move)
+
+             Manager (group_pdc_manager):
+               - Return The Checks
+               - Bounce The Checks
+               - Cancel
+               - Cancel & Reset Draft
+               - Cancel & Delete
+             ================================================================ -->
+
+        <!-- User actions -->
+        <record id="sh_pdc.model_pdc_wizard_action_state_register" model="ir.actions.server">
+            <field name="group_ids" eval="[(4, ref('rental_management_pdc.group_pdc_user'))]"/>
+        </record>
+
+        <record id="sh_pdc.model_pdc_wizard_action_state_deposit" model="ir.actions.server">
+            <field name="group_ids" eval="[(4, ref('rental_management_pdc.group_pdc_user'))]"/>
+        </record>
+
+        <record id="sh_pdc.model_pdc_wizard_action_state_done" model="ir.actions.server">
+            <field name="group_ids" eval="[(4, ref('rental_management_pdc.group_pdc_user'))]"/>
+        </record>
+
+        <record id="sh_pdc.model_account_move_action_register_check" model="ir.actions.server">
+            <field name="group_ids" eval="[(4, ref('rental_management_pdc.group_pdc_user'))]"/>
+        </record>
+
+        <!-- Manager actions -->
+        <record id="sh_pdc.model_pdc_wizard_action_state_return" model="ir.actions.server">
+            <field name="group_ids" eval="[(4, ref('rental_management_pdc.group_pdc_manager'))]"/>
+        </record>
+
+        <record id="sh_pdc.model_pdc_wizard_action_state_bounce" model="ir.actions.server">
+            <field name="group_ids" eval="[(4, ref('rental_management_pdc.group_pdc_manager'))]"/>
+        </record>
+
+        <record id="sh_pdc.sh_cancel_pdc_multi_action" model="ir.actions.server">
+            <field name="group_ids" eval="[(4, ref('rental_management_pdc.group_pdc_manager'))]"/>
+        </record>
+
+        <record id="sh_pdc.sh_cancel_pdc_draft_multi_action" model="ir.actions.server">
+            <field name="group_ids" eval="[(4, ref('rental_management_pdc.group_pdc_manager'))]"/>
+        </record>
+
+        <record id="sh_pdc.sh_cancel_pdc_delete_multi_action" model="ir.actions.server">
+            <field name="group_ids" eval="[(4, ref('rental_management_pdc.group_pdc_manager'))]"/>
+        </record>
+
+    </data>
+</odoo>

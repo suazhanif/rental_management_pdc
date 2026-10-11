@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ================================================================
+             Restrict PDC action buttons to PDC User / PDC Manager groups.
+             Inherits sh_pdc.sh_pdc_payment_form_view to add groups attribute.
+
+             Mapping:
+               User (group_pdc_user):
+                 - Register  (action_register)
+                 - Deposit   (action_deposited)
+                 - Done      (action_done)
+
+               Manager (group_pdc_manager):
+                 - Reset to Draft (action_set_draft)
+                 - Return         (action_returned)
+                 - Bounce         (action_bounced)
+                 - Cancel         (action_cancel)
+             ================================================================ -->
+        <record id="sh_pdc_payment_form_view_inherit_role" model="ir.ui.view">
+            <field name="name">sh.pdc.payment.form.view.inherit.role</field>
+            <field name="model">pdc.wizard</field>
+            <field name="inherit_id" ref="sh_pdc.sh_pdc_payment_form_view" />
+            <field name="arch" type="xml">
+
+                <!-- Register — PDC User (and Manager via implied_ids) -->
+                <button name="action_register" position="attributes">
+                    <attribute name="groups">rental_management_pdc.group_pdc_user</attribute>
+                </button>
+
+                <!-- Deposit — PDC User -->
+                <button name="action_deposited" position="attributes">
+                    <attribute name="groups">rental_management_pdc.group_pdc_user</attribute>
+                </button>
+
+                <!-- Done — PDC User -->
+                <button name="action_done" position="attributes">
+                    <attribute name="groups">rental_management_pdc.group_pdc_user</attribute>
+                </button>
+
+                <!-- Reset to Draft — PDC Manager only -->
+                <button name="action_set_draft" position="attributes">
+                    <attribute name="groups">rental_management_pdc.group_pdc_manager</attribute>
+                </button>
+
+                <!-- Return — PDC Manager only -->
+                <button name="action_returned" position="attributes">
+                    <attribute name="groups">rental_management_pdc.group_pdc_manager</attribute>
+                </button>
+
+                <!-- Bounce — PDC Manager only -->
+                <button name="action_bounced" position="attributes">
+                    <attribute name="groups">rental_management_pdc.group_pdc_manager</attribute>
+                </button>
+
+                <!-- Cancel — PDC Manager only (replaces existing sh_pdc_cancel group) -->
+                <button name="action_cancel" position="attributes">
+                    <attribute name="groups">rental_management_pdc.group_pdc_manager</attribute>
+                </button>
+
+            </field>
+        </record>
+
+        <!-- ================================================================
+             Restrict "Register PDC Cheque" button on the wizard (popup) form.
+             ================================================================ -->
+        <record id="sh_pdc_wizard_form_wizard_inherit_role" model="ir.ui.view">
+            <field name="name">sh.pdc.wizard.form.wizard.inherit.role</field>
+            <field name="model">pdc.wizard</field>
+            <field name="inherit_id" ref="sh_pdc.sh_pdc_wizard_form_wizard" />
+            <field name="arch" type="xml">
+                <button name="button_register" position="attributes">
+                    <attribute name="groups">rental_management_pdc.group_pdc_user</attribute>
+                </button>
+            </field>
+        </record>
+
+    </data>
+</odoo>

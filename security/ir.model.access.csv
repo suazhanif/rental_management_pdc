@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tenancy_pdc_check,access_tenancy_pdc_check,model_tenancy_pdc_check,rental_management.property_rental_officer,1,1,1,1
+access_tenancy_pdc_check_manager,access_tenancy_pdc_check_manager,model_tenancy_pdc_check,rental_management.property_rental_manager,1,1,1,1
+access_pdc_wizard_user,access_pdc_wizard_user,model_pdc_wizard,rental_management_pdc.group_pdc_user,1,1,1,0
+access_pdc_wizard_manager,access_pdc_wizard_manager,model_pdc_wizard,rental_management_pdc.group_pdc_manager,1,1,1,1
+access_pdc_deposit_digest_user,access_pdc_deposit_digest_user,model_pdc_deposit_digest,base.group_user,1,1,1,0

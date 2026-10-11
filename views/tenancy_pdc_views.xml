@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ================================================================
+             TENANCY DETAILS FORM — PDC CONFIGURATION + BUTTONS
+             ================================================================ -->
+
+        <record id="tenancy_details_form_view_inherit_pdc" model="ir.ui.view">
+            <field name="name">tenancy.details.form.view.inherit.pdc</field>
+            <field name="model">tenancy.details</field>
+            <field name="inherit_id" ref="rental_management.tenancy_details_form_view" />
+            <field name="arch" type="xml">
+
+                <!-- PDC fields as standalone group after Contract Information group closes -->
+                <xpath expr="//field[@name='invoice_start_date']" position="after">
+                    <field name="pdc_enabled"
+                        readonly="contract_type != 'new_contract'"
+                        force_save="1"
+                        groups="rental_management.property_rental_manager" />
+                    <field name="pdc_auto_generate"
+                        readonly="contract_type != 'new_contract'"
+                        invisible="not pdc_enabled"
+                        force_save="1" />
+                    <field name="pdc_payment_day"
+                        style="width:80px;"
+                        readonly="contract_type != 'new_contract'"
+                        invisible="not pdc_enabled"
+                        force_save="1" />
+                </xpath>
+
+                <!-- PDC Action Buttons in header — after Cancel button -->
+                <button name="action_cancel_contract" position="after">
+                    <!-- Generate Cheques — Officer + Manager -->
+                    <button name="action_generate_pdc_checks"
+                        type="object"
+                        string="Generate PDC Cheques"
+                        class="btn btn-primary"
+                        invisible="pdc_generated or not pdc_enabled or contract_type == 'new_contract'"
+                        groups="rental_management.property_rental_officer,rental_management.property_rental_manager" />
+                </button>
+
+                <!-- PDC Status Alert Banner — inside sheet, before button_box -->
+                <xpath expr="//div[@name='button_box']" position="before">
+                    <div class="alert alert-info mb-2 text-center" role="alert"
+                        invisible="not (pdc_enabled and not pdc_generated and contract_type != 'new_contract')">
+                        <strong>PDC cheques will be generated upon contract activation.</strong>
+                    </div>
+                    <div class="alert alert-success mb-2 text-center" role="alert"
+                        invisible="not pdc_generated">
+                        <strong>
+                            <field name="pdc_check_count" readonly="1" force_save="1" /> PDC
+                            cheque(s) generated. </strong>
+                    </div>
+                </xpath>
+
+                <!-- Smart Button — PDC count -->
+                <xpath expr="//button[@name='action_maintenance_request']" position="after">
+                    <button class="oe_stat_button" type="object"
+                        name="action_view_pdc_checks"
+                        icon="fa-copy"
+                        invisible="not has_pdc_checks">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="pdc_check_count" />
+                            </span>
+                            <span class="o_stat_text">PDC Cheques</span>
+                        </div>
+                    </button>
+                </xpath>
+
+                <!-- PDC Cheques Notebook Page -->
+                <xpath expr="//page[@name='penalty_invoices']" position="after">
+                    <page string="PDC Cheques" name="pdc_cheques"
+                        invisible="not pdc_enabled">
+                        <field name="pdc_check_ids" readonly="1" force_save="1">
+                            <list>
+                                <field name="sequence" string="#" />
+                                <field name="is_deposit" />
+                                <field name="pdc_wizard_id" widget="many2one" />
+                                <field name="scheduled_date" />
+                                <field name="scheduled_amount" widget="monetary" />
+                                <field name="state" widget="badge"
+                                    decoration-success="state == 'done'"
+                                    decoration-danger="state in ['bounced','cancel']"
+                                    decoration-warning="state in ['deposited','registered']" />
+                            </list>
+                        </field>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- ================================================================
+             TENANCY DETAILS SEARCH — PDC FILTERS
+             ================================================================ -->
+        <record id="tenancy_details_search_view_inherit_pdc" model="ir.ui.view">
+            <field name="name">tenancy.details.search.view.inherit.pdc</field>
+            <field name="model">tenancy.details</field>
+            <field name="inherit_id" ref="rental_management.tenancy_details_search_view" />
+            <field name="arch" type="xml">
+                <filter name="group_by_status" position="after">
+                    <separator />
+                    <filter string="PDC Enabled" name="filter_pdc_enabled"
+                        domain="[('pdc_enabled','=',True)]" />
+                    <filter string="PDC Generated" name="filter_pdc_generated"
+                        domain="[('pdc_generated','=',True)]" />
+                </filter>
+            </field>
+        </record>
+
+        <!-- ================================================================
+             PDC WIZARD FORM — ADD TENANCY LINK (read-only)
+             ================================================================ -->
+        <record id="pdc_wizard_form_view_inherit_tenancy" model="ir.ui.view">
+            <field name="name">pdc.wizard.form.view.inherit.tenancy</field>
+            <field name="model">pdc.wizard</field>
+            <field name="inherit_id" ref="sh_pdc.sh_pdc_wizard_form_wizard" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="tenancy_id" readonly="1" force_save="1"
+                        groups="rental_management.property_rental_officer,rental_management.property_rental_manager" />
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

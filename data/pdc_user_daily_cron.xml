@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- ============================================================
+             Daily PDC-User Deposit Digest cron.
+
+             Runs once per day. Per-company gated by
+             res.company.is_pdc_user_daily_notify. See
+             rental_management_pdc/models/pdc_wizard.py for the method.
+             ============================================================ -->
+        <record id="pdc_user_daily_digest_cron" model="ir.cron">
+            <field name="name">PDC: Daily Deposit Digest (PDC User)</field>
+            <field name="active" eval="True"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="nextcall">2026-06-02 07:00:00</field>
+            <field name="model_id" ref="sh_pdc.model_pdc_wizard"/>
+            <field name="state">code</field>
+            <field name="code">model.notify_pdc_user_daily()</field>
+            <field name="priority" eval="5"/>
+        </record>
+    </data>
+</odoo>
